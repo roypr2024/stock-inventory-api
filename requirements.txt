@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+alembic
+pydantic
+pydantic-settings
+python-dotenv
+redis
+pyodbc
+aiosqlite          # for async SQLite in local
+greenlet
+httpx
+python-multipart
