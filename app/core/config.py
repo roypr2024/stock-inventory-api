@@ -1,26 +1,26 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import Optional
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
-
     # Environment
-    ENVIRONMENT: str = "local"          # local, dev, stage, prod
+    ENVIRONMENT: str = "local"
     DEBUG: bool = True
+    PROJECT_NAME: str = "Stock Inventory API"
 
-    # Database - will use SQLite locally, Azure SQL in cloud
+    # Database
     DATABASE_URL: str = "sqlite+aiosqlite:///./stock_inventory.db"
-    # For Azure SQL later: mssql+pyodbc://...
+    # For Azure SQL later: "mssql+pyodbc://sqladmin:Password@server.database.windows.net/db?driver=ODBC+Driver+18+for+SQL+Server"
 
-    # Redis - local Redis or fake for development
+    # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
-    CACHE_TTL_SECONDS: int = 3600       # 1 hour
+    CACHE_TTL_SECONDS: int = 7200   # 2 hours (since file updates every 3-4 hrs)
 
     # API
     API_V1_STR: str = "/api/v1"
-    PROJECT_NAME: str = "Stock Inventory API"
-
-    # File separator (your flat file)
     FILE_SEPARATOR: str = "|"
+
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+        extra = "ignore"
 
 settings = Settings()

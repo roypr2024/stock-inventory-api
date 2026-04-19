@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv
+.venv311
+venv/
+venv311/
+.git
+.gitignore
+README.md
+load_sample_data.py
+*.db

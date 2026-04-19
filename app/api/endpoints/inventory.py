@@ -1,26 +1,43 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional
+from app.core.config import settings   # ← This line was missing
 from app.core.database import get_db
-from app.core.redis import get_redis
+from app.services.inventory_service import InventoryService
+from app.schemas.inventory import InventoryQuery, InventoryListResponse
 
-router = APIRouter(tags=["Inventory"])
+router = APIRouter(prefix="/inventory", tags=["Inventory"])
 
-# Health check endpoint to verify API is running and can connect to DB and Redis
+@router.get("/account/{account_id}", response_model=InventoryListResponse)
+async def get_account_stock(
+    account_id: str,
+    db: AsyncSession = Depends(get_db)
+):
+    """Get all products for a specific account"""
+    if not account_id or len(account_id) < 3:
+        raise HTTPException(status_code=400, detail="Invalid account_id")
+    
+    return await InventoryService.get_stock(db, account_id)
+
+@router.get("/account/{account_id}/product/{product_code}", response_model=InventoryListResponse)
+async def get_account_product_stock(
+    account_id: str,
+    product_code: str,
+    db: AsyncSession = Depends(get_db)
+):
+    """Get specific product for a specific account"""
+    if not account_id or not product_code:
+        raise HTTPException(status_code=400, detail="Missing account_id or product_code")
+    
+    return await InventoryService.get_stock(db, account_id, product_code)
+
 @router.get("/health")
-async def health_check(db: AsyncSession = Depends(get_db)):
+async def health_check():
+    """Health check endpoint"""
     return {
         "status": "healthy",
-        "database": "sqlite (local)",
-        "message": "API is ready for development"
+        "environment": settings.ENVIRONMENT,
+        "database": "SQLite (Local)" if "sqlite" in settings.DATABASE_URL else "Azure SQL",
+        "message": "API is ready for development",
+        "cache": "Redis enabled" if settings.REDIS_URL.startswith("redis://") else "No Redis (local fallback)"
     }
-
-# Test endpoint to verify Redis connection (optional, can be removed later)
-@router.get("/cache-test")
-async def cache_test():
-    redis = await get_redis()
-    try:
-        await redis.set("test_key", "Hello from Redis!", ex=60)
-        value = await redis.get("test_key")
-        return {"cache_status": "working", "value": value}
-    except Exception as e:
-        return {"cache_status": "not connected (OK for local dev)", "error": str(e)}
