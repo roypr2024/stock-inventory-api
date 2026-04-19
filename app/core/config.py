@@ -7,7 +7,8 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Stock Inventory API"
 
     # Database
-    DATABASE_URL: str = "sqlite+aiosqlite:///./stock_inventory.db"
+    #DATABASE_URL: str = "sqlite+aiosqlite:///./stock_inventory.db"
+    DATABASE_URL: str = "mssql+pyodbc://sqladmin:Admin@1234!@sql-stock-inv.database.windows.net/stockinventorydb?driver=ODBC+Driver+18+for+SQL+Server"
     # For Azure SQL later: "mssql+pyodbc://sqladmin:Password@server.database.windows.net/db?driver=ODBC+Driver+18+for+SQL+Server"
 
     # Redis
