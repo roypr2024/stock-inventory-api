@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: stock-inventory-api
-        image: acrstockinv2026.azurecr.io/stock-inventory-api:latest   # Will be updated by CI/CD
+        image: dummy-image   # Will be updated by CI/CD
         ports:
         - containerPort: 8000
         env:
