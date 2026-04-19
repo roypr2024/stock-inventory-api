@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: stock-inventory-api
+  labels:
+    app: stock-inventory-api
 spec:
   replicas: 2
   selector:
@@ -19,7 +21,7 @@ spec:
         - containerPort: 8000
         env:
         - name: ENVIRONMENT
-          value: "dev"     # Will be overridden per namespace later
+          value: "development"
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
@@ -30,3 +32,12 @@ spec:
             secretKeyRef:
               name: stock-api-secrets
               key: redis-url
+        - name: CACHE_TTL_SECONDS
+          value: "7200"
+        resources:
+          requests:
+            cpu: "150m"
+            memory: "384Mi"
+          limits:
+            cpu: "600m"
+            memory: "768Mi"

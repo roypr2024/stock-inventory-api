@@ -2,10 +2,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: stock-inventory-api
+  labels:
+    app: stock-inventory-api
 spec:
   selector:
     app: stock-inventory-api
   ports:
   - port: 80
     targetPort: 8000
+    name: http
   type: LoadBalancer
